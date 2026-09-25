@@ -310,6 +310,7 @@ return (
                 {marker.description && (
                   <p style={styles.description}>{marker.description}</p>
                 )}
+                {/* Botón para ver/ocultar comentarios */}
                 <button
                   style={{ ...styles.btn, backgroundColor: "#7d853a" }}
                   onClick={(e) => {
