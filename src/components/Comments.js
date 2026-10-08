@@ -95,7 +95,7 @@ export default function Comments({ markerId }) {
           onClick={(e) => { e.stopPropagation(); handleAddComment(); }}
           disabled={!newComment.trim()}
         >
-          Comentar
+          
         </button>
       </div>
     </div>
@@ -121,10 +121,14 @@ const styles = {
   inputArea: { display: "flex", flexDirection: "column", gap: "4px" },
   textarea: {
     padding: "6px", borderRadius: "6px", border: "1px solid #d1d5db",
-    fontSize: "12px", resize: "none", width: "100%",
+    fontSize: "12px", resize: "none", width: "81%",
   },
+  
   addBtn: {
     padding: "6px", backgroundColor: "#3b82f6", color: "#fff",
-    border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "12px",
+    border: "none", borderRadius: "50%", cursor: "pointer", fontSize: "10px", 
+    position: "absolute", alignSelf: "flex-end", height: "46px", width: "46px", 
+    display: "flex", alignItems: "center", justifyContent: "center",
+    aspectRatio: "1 / 1", // Mantener proporción cuadrada
   },
 };

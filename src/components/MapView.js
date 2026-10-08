@@ -1,7 +1,7 @@
 
 import React from "react";
 import HeatmapLayer from "./HeatmapLayer";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, ZoomControl } from "react-leaflet";
 import { signOut } from "firebase/auth";
 import "leaflet/dist/leaflet.css";
 import Markers from "./Markers";
@@ -10,7 +10,8 @@ import AdminPanel from "./adminpanel";
 import { auth, db } from "../firebase/config";
 import { collection, query, where, onSnapshot} from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
-<script src="leaflet-heat.js"></script>
+
+
 const MapView = () => {
   const { user, role } = useAuth();
   const markersRef = React.useRef(null);
@@ -19,7 +20,7 @@ const MapView = () => {
   const [unreadCount, setUnreadCount] = React.useState(0);
   const [view, setView] = React.useState('markers');
   const [approvedPoints, setApprovedPoints] = React.useState([]);
-
+  const [isFollowing, setIsFollowing] = React.useState(false);
 //Puntos aprobados  
 React.useEffect(() => {
   const q = query(
@@ -49,14 +50,21 @@ React.useEffect(() => {
   return () => unsub();
 }, [user]);
 
-
+//Cerrar sesión
   const handleLogout = async () => {
     await signOut(auth);
   };
+//Función para ubicar el marcador en la ubicación actual
   const handleLocateClick = () => {
    markersRef.current?.useCurrentLocation();
   };
 
+const handleFollowClick = () => {
+  if (markersRef.current) {
+    markersRef.current.FollowUser();
+    setIsFollowing((prev) => !prev);
+  }
+};
   return (
     <div style={{ position: "relative", height: "100vh", width: "100%", overflow: "hidden" }}>
       <div style={styles.topBar}>
@@ -107,22 +115,32 @@ React.useEffect(() => {
       
       <MapContainer
         center={[-1.0388699521021827, -80.49726604495315]}
-        zoom={17}
+        zoom={17} 
+        zoomControl={false}
       >
+        
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
         {view === 'markers' && <Markers ref={markersRef} />}
         {view === 'heatmap' && <HeatmapLayer points={approvedPoints} />}
+        <ZoomControl position="bottomleft" />
       </MapContainer>
       
+
       <button
         style={styles.locateBtn}
         onClick={handleLocateClick}
         title="Agregar marcador en ubicación actual"></button>
-    
-          {adminPanelOpen && (
+      <button
+        style={{ ...styles.locateBtn, bottom: "90px" }}
+        onClick={handleFollowClick}
+        title={isFollowing ? "Dejar de seguir" : "Seguir ubicación actual"}>
+        {isFollowing ? "D" : "A"}
+      </button>
+    {/*Renderizar los paneles de administración y notificaciones según el estado*/}
+      {adminPanelOpen && (
         <AdminPanel onClose={() => setAdminPanelOpen(false)} />)}
       {showPanelNotif && (
         <PanelNotif onClose={() => setShowPanelNotif(false)} />
@@ -162,8 +180,8 @@ const styles = {
     fontSize: "13px",
   },
     locateBtn: {
-    position: "absolute",
-    bottom: "80px",
+    position: "fixed",
+    bottom: "20px",
     right: "16px",
     zIndex: 1000, 
     width: "60px",

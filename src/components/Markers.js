@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import IconLocation from "./IconLocation";
 import TemporaryIcon from "./TemporaryIcon";
 import Comments from "./Comments";
+import UserIcon from "./UserIcon";
 
 const Markers = forwardRef((props, ref) => {
   const { user, role } = useAuth();
@@ -29,13 +30,13 @@ const Markers = forwardRef((props, ref) => {
   const [editDesc, setEditDesc] = useState("");
   const [pendingPosition, setPendingPosition] = useState(null);
   const [newLabel, setNewLabel] = useState("");
-
-  const [comments, setComments] = useState({});
+  const [isFollowing, setIsFollowing] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
-  
+  const [FollowUserMarker, setFollowUserMarker] = useState(null);
   const [newCrime, setNewCrime] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const pendingMarkerRef = React.useRef(null);
+  const watchIdRef = useRef(null);
 
   // Mostrar marcadores
   useEffect(() => {
@@ -77,7 +78,7 @@ const Markers = forwardRef((props, ref) => {
   }, [user.uid]);
 
 
-  
+  // Abrir popup del marcador pendiente al hacer clic en el mapa
   useEffect(() => {
     if (pendingPosition && pendingMarkerRef.current) {
       pendingMarkerRef.current.openPopup();
@@ -95,8 +96,7 @@ const Markers = forwardRef((props, ref) => {
     }     
   });
 
-  //marcador en posicion actual
-
+//marcador en posicion actual
 const handleUseCurrentLocation = () => {
     if (pendingPosition) return; 
  
@@ -121,14 +121,54 @@ const handleUseCurrentLocation = () => {
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0,}
     );
   };
- 
+ //seguimiento en tiempo real del usuario
+const handleFollowUser = () => {
+    if (isFollowing) {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+      }
+      setIsFollowing(false);
+      setFollowUserMarker(null);
+    } else {
+      if (!navigator.geolocation) {
+        alert("Geolocalización no soportada por tu navegador.");
+        return;
+    }
+      const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setFollowUserMarker([latitude, longitude]);
+          map.setView([latitude, longitude], 17);
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            alert("Permiso de ubicación denegado. Actívalo en la configuración del navegador.");
+          } else {
+            alert("No se pudo obtener tu ubicación. Intenta de nuevo.");
+          }
+          setIsFollowing(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0,}
+    );
+    watchIdRef.current = watchId;
+    setIsFollowing(true);
+  };
+};
   useImperativeHandle(ref, () => ({
     useCurrentLocation: handleUseCurrentLocation,
+    FollowUser: handleFollowUser,
   }));
 
+// Limpiar el watch de geolocalización al desmontar el componente
+useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+    };
+  }, []);
 
-
-  
 //  guardar nuevo marcador 
   const handleConfirmNewMarker = async () => {
     if (!newLabel.trim()) return; 
@@ -358,6 +398,14 @@ return (
           
         </Marker>
       ))}
+      {/* Renderizar el marcador de seguimiento del usuario si está activo */}
+      {FollowUserMarker && (
+        <Marker
+          position={FollowUserMarker}
+          icon={UserIcon}
+        />
+        
+      )}
     </>
   );
 });
