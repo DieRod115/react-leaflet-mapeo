@@ -10,6 +10,7 @@ import AdminPanel from "./adminpanel";
 import { auth, db } from "../firebase/config";
 import { collection, query, where, onSnapshot} from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
+import "./styles.css";
 
 
 const MapView = () => {
@@ -21,6 +22,7 @@ const MapView = () => {
   const [view, setView] = React.useState('markers');
   const [approvedPoints, setApprovedPoints] = React.useState([]);
   const [isFollowing, setIsFollowing] = React.useState(false);
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
 //Puntos aprobados  
 React.useEffect(() => {
   const q = query(
@@ -37,6 +39,8 @@ React.useEffect(() => {
   });
   return () => unsub();
   }, []);
+
+
 
 //Notificaciones
 React.useEffect(() => {
@@ -68,14 +72,54 @@ const handleFollowClick = () => {
   return (
     <div style={{ position: "relative", height: "100vh", width: "100%", overflow: "hidden" }}>
       <div style={styles.topBar}>
-        <span style={styles.greeting}>
-          {user?.displayName || user?.email}
-        </span>
+      {/* Dropdown del usuario */}
+        <div style={{ position: "relative" }}>
+          <button
+            style={styles.dropBtn}
+            onClick={() => setDropdownOpen((prev) => !prev)}
+          >
+            {user?.displayName || user?.email} ▾
+          </button>
+
+          {dropdownOpen && (
+            <>
+              <div
+                style={styles.overlay}
+                onClick={() => setDropdownOpen(false)}
+              />
+              <div style={styles.dropMenu}>
+                <div style={styles.dropHeader}>
+                  <div>
+                    <p style={styles.dropName}>{user?.displayName || "Usuario"}</p>
+                  </div>
+                </div>
+
+                <div style={styles.dropDivider} />
+
+                <button style={styles.dropItem}>
+                  Reportes
+                </button>
+
+                <div style={styles.dropDivider} />
+
+                <button
+                  style={{ ...styles.dropItem, color: "#ef4444" }}
+                  onClick={() => { handleLogout(); setDropdownOpen(false); }}
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      
+        
         <span style={styles.hint}>Portoviejo</span>
+
+        {/* Botón para cambiar entre vista de marcadores y mapa de calor */}
         <button
           style={{
-            ...styles.adminBtn,
-            backgroundColor: adminPanelOpen ? "#1e3a5f" : "#3b82f6",
+            ...styles.dropBtn,
           }}
         onClick={() => setView((v)=> v === 'markers' ? 'heatmap' : 'markers')}
       >
@@ -100,8 +144,7 @@ const handleFollowClick = () => {
         {role === "admin" && (
           <button
             style={{
-              ...styles.adminBtn,
-              backgroundColor: adminPanelOpen ? "#1e3a5f" : "#3b82f6",
+              ...styles.dropBtn,
             }}
             onClick={() => setAdminPanelOpen((prev) => !prev)}
           >
@@ -109,8 +152,7 @@ const handleFollowClick = () => {
           </button>
         )}
           
-
-        <button style={styles.logoutBtn} onClick={handleLogout}>Cerrar sesión</button>
+        
       </div>
       
       <MapContainer
@@ -127,7 +169,10 @@ const handleFollowClick = () => {
         {view === 'heatmap' && <HeatmapLayer points={approvedPoints} />}
         <ZoomControl position="bottomleft" />
       </MapContainer>
+        
+        
       
+
 
       <button
         style={styles.locateBtn}
@@ -155,21 +200,23 @@ const handleFollowClick = () => {
 };
 
 const styles = {
+  
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1000,
-    backgroundColor: "rgba(255,255,255,0.95)",
+    backgroundColor: "rgba(24, 24, 24, 0.95)",
     padding: "10px 16px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+    fontColor: "#fff",
   },
-  greeting: { fontSize: "14px", fontWeight: "bold", color: "#333" },
-  hint: { fontSize: "13px", color: "#666" },
+  greeting: { fontSize: "14px", fontWeight: "bold", color: "#fff" },
+  hint: { fontSize: "13px", color: "#ccc" },
   logoutBtn: {
     padding: "6px 14px",
     backgroundColor: "#ef4444",
@@ -228,6 +275,67 @@ badge: {
   alignItems: "center",
   justifyContent: "center",
   padding: "0 3px",
+},
+dropBtn: {
+  padding: "6px 10px",
+  backgroundColor: "transparent",
+  border: "1px solid #d1d5db",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontSize: "13px",
+  fontWeight: "bold",
+  color: "#ffffff",
+},
+overlay: {
+  position: "fixed",
+  top: 0, left: 0, right: 0, bottom: 0,
+  zIndex: 1999,
+},
+dropMenu: {
+  position: "absolute",
+  top: "110%",
+  left: 0,
+  backgroundColor: "rgba(24, 24, 24, 0.95)",
+  border: "1px solid #e5e7eb",
+  borderRadius: "12px",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+  minWidth: "220px",
+  zIndex: 2000,
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
+},
+dropHeader: {
+  padding: "14px 16px",
+  backgroundColor: "rgba(24, 24, 24, 0.95)",
+},
+dropName: {
+  fontWeight: "bold",
+  fontSize: "14px",
+  color: "#fff",
+  margin: 0,
+},
+dropEmail: {
+  fontSize: "12px",
+  color: "#ccc",
+  margin: "2px 0 0 0",
+},
+dropDivider: {
+  height: "1px",
+  backgroundColor: "#e5e7eb",
+},
+dropItem: {
+  padding: "11px 16px",
+  background: "none",
+  border: "none",
+  textAlign: "left",
+  cursor: "pointer",
+  fontSize: "13px",
+  color: "#ccc",
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  gap: "8px",
 },
 };
 
