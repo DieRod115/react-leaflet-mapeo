@@ -5,6 +5,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
+import icon2 from "../assets/SendIcon.png";
 
 export default function Comments({ markerId }) {
   const [comments, setComments] = useState([]);
@@ -95,7 +96,8 @@ export default function Comments({ markerId }) {
           onClick={(e) => { e.stopPropagation(); handleAddComment(); }}
           disabled={!newComment.trim()}
         >
-          
+          <img src={icon2} alt="Send Icon" style={{ width: "23px", height: "23px" }} />
+
         </button>
       </div>
     </div>
@@ -125,9 +127,9 @@ const styles = {
   },
   
   addBtn: {
-    padding: "6px", backgroundColor: "#3b82f6", color: "#fff",
+    padding: "6px", backgroundColor: "rgba(24, 24, 24, 0.95)", color: "#fff",
     border: "none", borderRadius: "50%", cursor: "pointer", fontSize: "10px", 
-    position: "absolute", alignSelf: "flex-end", height: "46px", width: "46px", 
+    position: "absolute", alignSelf: "flex-end", height: "44px", width: "44px", 
     display: "flex", alignItems: "center", justifyContent: "center",
     aspectRatio: "1 / 1", // Mantener proporción cuadrada
   },

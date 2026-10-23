@@ -10,7 +10,9 @@ import AdminPanel from "./adminpanel";
 import { auth, db } from "../firebase/config";
 import { collection, query, where, onSnapshot} from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
-import "./styles.css";
+import logo1 from "../assets/MapCrosshairs.png";
+import logo2 from "../assets/NotifIcon.png";
+import logo3 from "../assets/icon.png";
 
 
 const MapView = () => {
@@ -70,7 +72,7 @@ const handleFollowClick = () => {
   }
 };
   return (
-    <div style={{ position: "relative", height: "100vh", width: "100%", overflow: "hidden" }}>
+    <div style={{ position: "fixed", height: "100vh", width: "100%", overflow: "hidden" }}>
       <div style={styles.topBar}>
       {/* Dropdown del usuario */}
         <div style={{ position: "relative" }}>
@@ -114,7 +116,7 @@ const handleFollowClick = () => {
         </div>
       
         
-        <span style={styles.hint}>Portoviejo</span>
+        {/*<span style={styles.hint}>Portoviejo</span>*/}
 
         {/* Botón para cambiar entre vista de marcadores y mapa de calor */}
         <button
@@ -132,10 +134,10 @@ const handleFollowClick = () => {
             onClick={() => setShowPanelNotif((prev) => !prev)}
             title="Notificaciones"
           >
-            🔔
+            <img src={logo2} alt="Notification Icon" style={{ width: "32px", height: "32px" }} />
             {unreadCount > 0 && (
               <span style={styles.badge}>
-                {unreadCount > 9 ? "9+" : unreadCount}
+                {/*{unreadCount > 9 ? "9+" : unreadCount}*/}
               </span>
             )}
           </button>
@@ -163,7 +165,7 @@ const handleFollowClick = () => {
         
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          
         />
         {view === 'markers' && <Markers ref={markersRef} />}
         {view === 'heatmap' && <HeatmapLayer points={approvedPoints} />}
@@ -177,12 +179,15 @@ const handleFollowClick = () => {
       <button
         style={styles.locateBtn}
         onClick={handleLocateClick}
-        title="Agregar marcador en ubicación actual"></button>
+        title="Agregar marcador en ubicación actual">
+          <img src={logo3} alt="Locate Icon" style={{ width: "34px", height: "34px" }} />
+        </button>
       <button
         style={{ ...styles.locateBtn, bottom: "90px" }}
         onClick={handleFollowClick}
         title={isFollowing ? "Dejar de seguir" : "Seguir ubicación actual"}>
-        {isFollowing ? "D" : "A"}
+          <img src={logo1} alt="Follow Icon" style={{ width: "34px", height: "34px" }} />
+        {isFollowing && <span style={{ position: "absolute", top: "-4px", right: "-4px", width: "10px", height: "10px", backgroundColor: "#ef4444", borderRadius: "50%" }}></span>}
       </button>
     {/*Renderizar los paneles de administración y notificaciones según el estado*/}
       {adminPanelOpen && (
@@ -262,19 +267,12 @@ bellBtn: {
 },
 badge: {
   position: "absolute",
-  top: "-2px",
+  top: "-4px",
   right: "-4px",
   backgroundColor: "#ef4444",
-  color: "#fff",
-  fontSize: "10px",
-  fontWeight: "bold",
   borderRadius: "50%",
-  minWidth: "18px",
-  height: "18px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  padding: "0 3px",
+  minWidth: "10px",
+  height: "10px",
 },
 dropBtn: {
   padding: "6px 10px",

@@ -251,6 +251,7 @@ return (
                 <option value="Asalto">Asalto</option>
                 <option value="Acoso">Acoso</option>
                 <option value="Violencia">Violencia</option>
+                <option value="Otro">Otro</option>
               </select>
               <textarea
                 style={styles.textarea}
@@ -312,6 +313,7 @@ return (
                   <option value="Asalto">Asalto</option>
                   <option value="Acoso">Acoso</option>
                   <option value="Violencia">Violencia</option>
+                  <option value="Otro">Otro</option>
                 </select>
                 <textarea
                   style={styles.textarea}
