@@ -25,7 +25,8 @@ const MapView = () => {
   const [approvedPoints, setApprovedPoints] = React.useState([]);
   const [isFollowing, setIsFollowing] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-//Puntos aprobados  
+  
+//Puntos/marcadores aprobados  
 React.useEffect(() => {
   const q = query(
     collection(db, 'markers'),

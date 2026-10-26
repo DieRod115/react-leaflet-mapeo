@@ -19,6 +19,8 @@ import IconLocation from "./IconLocation";
 import TemporaryIcon from "./TemporaryIcon";
 import Comments from "./Comments";
 import UserIcon from "./UserIcon";
+import handleSaveEdit from "./adminpanel";
+import handleDelete from "./adminpanel";
 
 const Markers = forwardRef((props, ref) => {
   const { user, role } = useAuth();
@@ -199,17 +201,40 @@ useEffect(() => {
 
   //  guardar cambios  
   const handleSaveEdit = async (id) => {
+    const marker = markers.find((m) => m.id === id);
     await updateDoc(doc(db, "markers", id), {
       label: editLabel,
       description: editDesc,
       incident: editCrime,
     });
+     if (marker) {
+        await addDoc(collection(db, "notifications"), {
+          userId: marker.createdBy,
+          type: "editado",
+          title: "Reporte editado",
+          message: `Tu reporte "${marker.label}" fue editado por un moderador.`,
+          adminNote: "",
+          read: false,
+          createdAt: serverTimestamp(),
+        });
+      }
     setEditingId(null);
   };
 
   //  borrar marcador 
   const handleDelete = async (id) => {
+    const marker = markers.find((m) => m.id === id);
     if (window.confirm("¿Eliminar este marcador?")) {
+      if (marker) {
+          await addDoc(collection(db, "notifications"), {
+            userId: marker.createdBy,
+            type: "eliminado",
+            title: "Reporte eliminado",
+            message: `Tu reporte "${marker.label}" fue eliminado por un moderador.`,
+            read: false,
+            createdAt: serverTimestamp(),
+          });
+        }
       await deleteDoc(doc(db, "markers", id));
     }
   };

@@ -17,11 +17,12 @@ const PanelNotif = ({ onClose }) => {
   const { user } = useAuth();
   const [notifs, setNotifs] = useState([]);
 
-  // Escuchar notificaciones en tiempo real
+  // Escuchar notificaciones en tiempo real (creoxd)
   useEffect(() => {
     const q = query(
       collection(db, "notifications"),
-      where("userId", "==", user.uid)
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc")
     );
     const unsub = onSnapshot(q, (snap) => {
       setNotifs(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -29,7 +30,7 @@ const PanelNotif = ({ onClose }) => {
     return () => unsub();
   }, [user.uid]);
 
-  // Al abrir el panel, marcar todas como leídas
+  // marcar todas las notificaciones como leídas al abrir el panel
   useEffect(() => {
     const markAllRead = async () => {
       const q = query(
@@ -49,12 +50,15 @@ const PanelNotif = ({ onClose }) => {
     if (type === "aprobado") return "";
     if (type === "rechazado") return "";
     if (type === "nearby") return "";
-    return "🔔";
+    if (type === "editado") return "";
+    if (type === "eliminado") return "";
   };
 
   const getBorderColor = (type) => {
     if (type === "aprobado") return "#10b981";
+    if (type === "editado") return "#f59e0b";
     if (type === "rechazado") return "#ef4444";
+    if (type === "eliminado") return "#ef4444";
     if (type === "nearby") return "#3b82f6";
     return "#d1d5db";
   };

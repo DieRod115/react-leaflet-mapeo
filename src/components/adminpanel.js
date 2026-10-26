@@ -47,11 +47,23 @@ const AdminPanel = ({ onClose }) => {
   };
  
   const handleSaveEdit = async (id) => {
+    const marker = pending.find((m) => m.id === id);
     await updateDoc(doc(db, "markers", id), {
       label: editLabel,
       incident: editIncident,
       description: editDesc,
     });
+    if (marker) {
+    await addDoc(collection(db, "notifications"), {
+      userId: marker.createdBy,
+      type: "editado",
+      title: "Reporte editado",
+      message: `Tu reporte "${marker.label}" fue editado por un moderador.`,
+      adminNote: "",
+      read: false,
+      createdAt: serverTimestamp(),
+    });
+  }
     setEditingId(null);
   };
 //────────────────────────────────────────────────────────────────────────────────────────────────
@@ -74,6 +86,7 @@ const AdminPanel = ({ onClose }) => {
         createdAt: serverTimestamp(),
       });
     }
+
     if (editingId === id) setEditingId(null); 
   };
 
