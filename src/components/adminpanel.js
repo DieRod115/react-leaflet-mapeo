@@ -16,6 +16,7 @@ import { db } from "../firebase/config";
 const AdminPanel = ({ onClose }) => {
   const [pending, setPending] = useState([]);
   const [rejectNotes, setRejectNotes] = useState({});
+  const [rejectingId, setRejectingId] = useState(null);
   // Edición 
   const [editingId, setEditingId] = useState(null);
   const [editLabel, setEditLabel] = useState("");
@@ -68,7 +69,7 @@ const AdminPanel = ({ onClose }) => {
   };
 //────────────────────────────────────────────────────────────────────────────────────────────────
 
-  // ─── APROBAR: cambia status a "aprobado" ─────────────────────────────────
+  //  APROBAR: cambia status a "aprobado" ─────────────────────────────────
   const handleApprove = async (id) => {
     const marker = pending.find((m) => m.id === id);
     await updateDoc(doc(db, "markers", id), {
@@ -90,26 +91,37 @@ const AdminPanel = ({ onClose }) => {
     if (editingId === id) setEditingId(null); 
   };
 
-  // ─── RECHAZAR: cambia status a "rechazado" y guarda el motivo ────────────
-    const handleReject = async (id) => {
-    const note = rejectNotes[id] || "";
- 
-    // Confirmación opcional antes de eliminar
-    if (!window.confirm(`¿Rechazar y eliminar este reporte?${note ? `\n\nMotivo: ${note}` : ""}`)) return;
-   const marker = pending.find((m) => m.id === id);
+  // abrir el campo de motivo de rechazo
+  const startReject = (id) => setRejectingId(id);
 
- 
-  if (marker) {
-    await addDoc(collection(db, "notifications"), {
-      userId: marker.createdBy,
-      type: "rechazado",
-      title: "Reporte rechazado",
-      message: `Tu reporte "${marker.label}" fue rechazado por un moderador.`,
-      adminNote: note,
-      read: false,
-      createdAt: serverTimestamp(),
-    });
-  }
+  //cierra y descarta el motivo escrito
+  const cancelReject = () => {
+    if (rejectingId) {
+      setRejectNotes((prev) => {
+        const copy = { ...prev };
+        delete copy[rejectingId];
+        return copy;
+      });
+    }
+    setRejectingId(null);
+  };
+
+  //  confirmar y guardar el motivo de rechazp ─────────────────────
+  const handleReject = async (id) => {
+    const note = rejectNotes[id] || "";
+    const marker = pending.find((m) => m.id === id);
+
+    if (marker) {
+      await addDoc(collection(db, "notifications"), {
+        userId: marker.createdBy,
+        type: "rechazado",
+        title: "Reporte rechazado",
+        message: `Tu reporte "${marker.label}" fue rechazado por un moderador.`,
+        adminNote: note,
+        read: false,
+        createdAt: serverTimestamp(),
+      });
+    }
     await deleteDoc(doc(db, "markers", id));
 
     // Limpiar el campo de ese reporte
@@ -118,6 +130,7 @@ const AdminPanel = ({ onClose }) => {
       delete copy[id];
       return copy;
     });
+    setRejectingId(null);
   };
 
 
@@ -172,18 +185,29 @@ const AdminPanel = ({ onClose }) => {
         {marker.createdAt?.seconds && (
           <div style={styles.metaRow}>Fecha: {new Date(marker.createdAt.seconds * 1000).toLocaleString("es-EC")}</div>
         )}
-        <textarea
-          style={styles.noteInput}
-          placeholder="Motivo de rechazo"
-          value={rejectNotes[marker.id] || ""}
-          onChange={(e) => setRejectNotes((prev) => ({ ...prev, [marker.id]: e.target.value }))}
-          rows={2}
-        />
-        <div style={styles.actionRow}>
-          <button style={{ ...styles.btn, backgroundColor: "#3b82f6" }} onClick={() => startEdit(marker)}>Editar</button>
-          <button style={{ ...styles.btn, backgroundColor: "#10b981" }} onClick={() => handleApprove(marker.id)}>Aprobar</button>
-          <button style={{ ...styles.btn, backgroundColor: "#ef4444" }} onClick={() => handleReject(marker.id)}>Rechazar</button>
-        </div>
+        {rejectingId === marker.id ? (
+          <>
+            <label style={styles.rejectLabel}>Motivo de rechazo</label>
+            <textarea
+              style={styles.noteInput}
+              placeholder="Motivo del rechazo..."
+              value={rejectNotes[marker.id] || ""}
+              onChange={(e) => setRejectNotes((prev) => ({ ...prev, [marker.id]: e.target.value }))}
+              rows={3}
+              autoFocus
+            />
+            <div style={styles.actionRow}>
+              <button style={{ ...styles.btn, backgroundColor: "#ef4444" }} onClick={() => handleReject(marker.id)}>Confirmar rechazo</button>
+              <button style={{ ...styles.btn, backgroundColor: "#6b7280" }} onClick={cancelReject}>Cancelar</button>
+            </div>
+          </>
+        ) : (
+          <div style={styles.actionRow}>
+            <button style={{ ...styles.btn, backgroundColor: "#3b82f6" }} onClick={() => startEdit(marker)}>Editar</button>
+            <button style={{ ...styles.btn, backgroundColor: "#10b981" }} onClick={() => handleApprove(marker.id)}>Aprobar</button>
+            <button style={{ ...styles.btn, backgroundColor: "#ef4444" }} onClick={() => startReject(marker.id)}>Rechazar</button>
+          </div>
+        )}
       </>
     )}
   </div>
@@ -260,8 +284,15 @@ const styles = {
   },
   markerDesc: { fontSize: "13px", color: "#444", margin: 0 },
   metaRow: { fontSize: "12px", color: "#6b7280" },
+  rejectLabel: {
+    fontSize: "12px",
+    fontWeight: "bold",
+    color: "#374151",
+    marginTop: "4px",
+  },
   noteInput: {
     padding: "6px",
+    boxSizing: "border-box",
     borderRadius: "6px",
     border: "1px solid #d1d5db",
     fontSize: "12px",

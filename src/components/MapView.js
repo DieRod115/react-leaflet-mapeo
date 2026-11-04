@@ -4,9 +4,11 @@ import HeatmapLayer from "./HeatmapLayer";
 import { MapContainer, TileLayer, ZoomControl } from "react-leaflet";
 import { signOut } from "firebase/auth";
 import "leaflet/dist/leaflet.css";
+import "./styles.css";
 import Markers from "./Markers";
 import PanelNotif from "./PanelNotif";
 import AdminPanel from "./adminpanel";
+import ReportsPage from "./ReportsPage";
 import { auth, db } from "../firebase/config";
 import { collection, query, where, onSnapshot} from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
@@ -25,6 +27,7 @@ const MapView = () => {
   const [approvedPoints, setApprovedPoints] = React.useState([]);
   const [isFollowing, setIsFollowing] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [page, setPage] = React.useState("map");
   
 //Puntos/marcadores aprobados  
 React.useEffect(() => {
@@ -72,6 +75,11 @@ const handleFollowClick = () => {
     setIsFollowing((prev) => !prev);
   }
 };
+
+  if (page === "reports") {
+    return <ReportsPage onBack={() => setPage("map")} />;
+  }
+
   return (
     <div style={{ position: "fixed", height: "100vh", width: "100%", overflow: "hidden" }}>
       <div style={styles.topBar}>
@@ -90,23 +98,25 @@ const handleFollowClick = () => {
                 style={styles.overlay}
                 onClick={() => setDropdownOpen(false)}
               />
-              <div style={styles.dropMenu}>
-                <div style={styles.dropHeader}>
-                  <div>
-                    <p style={styles.dropName}>{user?.displayName || "Usuario"}</p>
-                  </div>
+              <div className="drop-menu">
+                <div className="drop-menu-header">
+                  <p className="drop-menu-name">{user?.displayName || "Usuario"}</p>
                 </div>
 
-                <div style={styles.dropDivider} />
-
-                <button style={styles.dropItem}>
-                  Reportes
-                </button>
-
-                <div style={styles.dropDivider} />
+                {role === "admin" && (
+                  <button
+                    className="drop-menu-item"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setPage("reports");
+                    }}
+                  >
+                    Reportes
+                  </button>
+                )}
 
                 <button
-                  style={{ ...styles.dropItem, color: "#ef4444" }}
+                  className="drop-menu-item drop-menu-item--danger"
                   onClick={() => { handleLogout(); setDropdownOpen(false); }}
                 >
                   Cerrar sesión
@@ -290,51 +300,10 @@ overlay: {
   top: 0, left: 0, right: 0, bottom: 0,
   zIndex: 1999,
 },
-dropMenu: {
-  position: "absolute",
-  top: "110%",
-  left: 0,
-  backgroundColor: "rgba(24, 24, 24, 0.95)",
-  border: "1px solid #e5e7eb",
-  borderRadius: "12px",
-  boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-  minWidth: "220px",
-  zIndex: 2000,
-  display: "flex",
-  flexDirection: "column",
-  overflow: "hidden",
-},
-dropHeader: {
-  padding: "14px 16px",
-  backgroundColor: "rgba(24, 24, 24, 0.95)",
-},
-dropName: {
-  fontWeight: "bold",
-  fontSize: "14px",
-  color: "#fff",
-  margin: 0,
-},
 dropEmail: {
   fontSize: "12px",
   color: "#ccc",
   margin: "2px 0 0 0",
-},
-dropDivider: {
-  height: "1px",
-  backgroundColor: "#e5e7eb",
-},
-dropItem: {
-  padding: "11px 16px",
-  background: "none",
-  border: "none",
-  textAlign: "left",
-  cursor: "pointer",
-  fontSize: "13px",
-  color: "#ccc",
-  width: "100%",
-  display: "flex",
-  alignItems: "center",
-  gap: "8px",
 },
 };
 

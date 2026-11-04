@@ -19,6 +19,7 @@ import IconLocation from "./IconLocation";
 import TemporaryIcon from "./TemporaryIcon";
 import Comments from "./Comments";
 import UserIcon from "./UserIcon";
+import MarkerIcon from "./MarkerIcon";
 import handleSaveEdit from "./adminpanel";
 import handleDelete from "./adminpanel";
 
@@ -310,7 +311,8 @@ return (
         <Marker
           key={marker.id}
           position={[marker.lat, marker.lng]}
-          icon={marker.status === "aprobado" ? IconLocation : TemporaryIcon}
+          icon={marker.status === "aprobado" ? marker.createdBy === user.uid ? MarkerIcon :  IconLocation : TemporaryIcon}
+          
         >
           <Popup 
           key={marker.id}

@@ -42,3 +42,63 @@
 
 /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
 .show {display:block;}
+
+/* ===== Dropdown del usuario (MapView) ===== */
+.drop-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: rgba(24, 24, 24, 0.95);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drop-menu-header {
+  padding: 14px 16px;
+  background-color: rgba(24, 24, 24, 0.95);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.drop-menu-name {
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  margin: 0;
+}
+
+.drop-menu-item {
+  padding: 11px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  color: #ccc;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Divisor solo entre ítems consecutivos visibles: nunca al inicio ni al final */
+.drop-menu-item + .drop-menu-item {
+  border-top: 1px solid #e5e7eb;
+}
+
+.drop-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.drop-menu-item--danger {
+  color: #ef4444;
+}
+
+.drop-menu-item--danger:hover {
+  background-color: rgba(239, 68, 68, 0.12);
+}
