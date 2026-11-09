@@ -12,15 +12,17 @@ export default function Comments({ markerId }) {
   const [newComment, setNewComment] = useState("");
   const { user, role } = useAuth();
   
-
+//Función para escuchar los comentarios de un marcador
   useEffect(() => {
     const q = query(
       collection(db, "comments"),
       where("markerId", "==", markerId)
     );
+    // Escuchar en tiempo real los comentarios del marcador
     const unsub = onSnapshot(q, (snap) => {
       setComments(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     });
+    //
     return () => unsub();
   }, [markerId]);
 

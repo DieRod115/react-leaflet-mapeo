@@ -18,6 +18,7 @@ import { useAuth } from "../context/AuthContext";
 import IconLocation from "./IconLocation";
 import TemporaryIcon from "./TemporaryIcon";
 import Comments from "./Comments";
+import Votes from "./Votes";
 import UserIcon from "./UserIcon";
 import MarkerIcon from "./MarkerIcon";
 import handleSaveEdit from "./adminpanel";
@@ -395,6 +396,8 @@ return (
                   <div>
                     <p style={styles.meta}>Comentarios</p>
                     <Comments markerId={marker.id} />
+                    <p style={styles.meta}>Valoración</p>
+                    <Votes markerId={marker.id} />
                   </div>
                 )}
                 {/*Mostrar botones de edicion y eliminacion solo al administrador */}

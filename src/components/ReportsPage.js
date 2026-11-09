@@ -255,7 +255,7 @@ const styles = {
   card: {
     backgroundColor: "#fff",
     border: "1px solid #e5e7eb",
-    borderRadius: "10px",
+    borderRadius: "1px",
     padding: "14px",
     display: "flex",
     flexDirection: "column",
