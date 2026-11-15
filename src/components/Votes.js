@@ -70,7 +70,7 @@ export default function Votes({ markerId }) {
           disabled={isSaving}
         >
           <span className="material-symbols-rounded">thumb_up</span>
-          Like {likeCount}
+          Me gusta {likeCount}
         </button>
 
         {/* Botón para votar negativo */}
@@ -83,7 +83,7 @@ export default function Votes({ markerId }) {
           disabled={isSaving}
         >
           <span className="material-symbols-rounded">thumb_down</span>
-          Dislike {dislikeCount}
+          No me gusta {dislikeCount}
         </button>
       </div>
     </div>

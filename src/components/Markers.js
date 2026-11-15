@@ -258,14 +258,14 @@ return (
           position={[pendingPosition.lat, pendingPosition.lng]}
           icon={TemporaryIcon}
         >
-          <Popup minWidth={220} closeOnClick={false} closeButton={false}>
+          <Popup minWidth={240} maxWidth={320} closeOnClick={false} closeButton={false}>
             <div style={styles.popupContent}>
-              <p style={styles.label}>Nuevo marcador</p>
+              <p style={styles.label}>Nuevo reporte</p>
               <input
                 style={styles.input}
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
-                placeholder="Nombre del marcador"
+                placeholder="Titulo del reporte. Ejem: Robo en...."
                 autoFocus
               />
               <select
@@ -319,7 +319,6 @@ return (
           key={marker.id}
           minWidth={340}
           maxWidth={420}
-          maxHeight={600}
           >
 
             {editingId === marker.id ? (
@@ -329,7 +328,7 @@ return (
                   style={styles.input}
                   value={editLabel}
                   onChange={(e) => setEditLabel(e.target.value)}
-                  placeholder="Nombre del marcador"
+                  placeholder="Titulo del reporte"
                 />
                 <select
                   style={styles.input}
@@ -375,8 +374,8 @@ return (
               // vista del marcador----------------------------------------------------------------------------
               <div style={styles.popupContent}>
                 <p style={styles.label}>{marker.label}</p>
-                <p style={styles.meta}>Fecha de reporte: {marker.reportDate || "No especificada"}</p>
-                <p style={styles.meta}>Incidente: {marker.incident || "No especificado"}</p>
+                <p style={{ ...styles.meta, fontSize: "14px" }}>Fecha de reporte: {marker.reportDate || "No especificada"}</p>
+                <p style={{ ...styles.meta, fontSize: "14px" }}>Incidente: {marker.incident || "No especificado"}</p>
                 {marker.description && (
                   <p style={styles.description}>{marker.description}</p>
                 )}
@@ -404,7 +403,7 @@ return (
                 {role === "admin" && (
                   <div style={styles.buttonRow}>
                     <button
-                      style={{ ...styles.btn, backgroundColor: "#3b82f6" }}
+                      style={{ ...styles.btn, backgroundColor: "#1a73e8" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         startEdit(marker);
@@ -413,7 +412,7 @@ return (
                       Editar
                     </button>
                     <button
-                      style={{ ...styles.btn, backgroundColor: "#ef4444" }}
+                      style={{ ...styles.btn, backgroundColor: "#c62828" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDelete(marker.id);
@@ -444,24 +443,41 @@ return (
 {/*IMPORTANTE: e.stopPropagation() evita que el popup se cierre al hacer clic en los botones dentro de él, recuérdalo */}
 
 const styles = {
-  popupContent: { display: "flex", flexDirection: "column", gap: "6px" },
-  label: { fontWeight: "bold", fontSize: "14px", margin: 0 },
-  description: { fontSize: "13px", color: "#444", margin: 0 },
-  meta: { fontSize: "12px", color: "#888", margin: 0 },
+  popupContent: { display: "flex", flexDirection: "column", gap: "8px" },
+  label: { fontWeight: "bold", fontSize: "15px", color: "#ffffff", margin: 0, paddingRight: "20px", wordBreak: "break-word" },
+  description: { fontSize: "13px", color: "#d4d4d4", margin: 0 },
+  meta: { fontSize: "12px", fontWeight: "bold", color: "#9ca3af", margin: 0 },
+  hint: { fontSize: "11px", color: "#fbbf24", margin: 0 },
   input: {
-    padding: "6px",
+    padding: "7px",
     borderRadius: "6px",
-    border: "1px solid #ccc",
+    border: "1px solid #3f3f3f",
+    backgroundColor: "#2a2a2a",
+    color: "#f5f5f5",
     fontSize: "13px",
     width: "100%",
+    boxSizing: "border-box",
+    display: "block",
+    margin: 0,
+    fontFamily: "inherit",
+    lineHeight: "1.4",
+    textAlign: "left",
   },
   textarea: {
-    padding: "6px",
+    padding: "7px",
     borderRadius: "6px",
-    border: "1px solid #ccc",
+    border: "1px solid #3f3f3f",
+    backgroundColor: "#2a2a2a",
+    color: "#f5f5f5",
     fontSize: "13px",
     width: "100%",
     resize: "vertical",
+    boxSizing: "border-box",
+    display: "block",
+    margin: 0,
+    fontFamily: "inherit",
+    lineHeight: "1.4",
+    textAlign: "left",
   },
   buttonRow: { display: "flex", gap: "6px", marginTop: "4px" },
   btn: {
