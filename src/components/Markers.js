@@ -11,7 +11,6 @@ import {
   serverTimestamp,
   query,
   where,
-  or,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
@@ -67,7 +66,7 @@ const Markers = forwardRef((props, ref) => {
       });
       setMarkers(combined);
     };
- 
+ //marcadores aprobados y pendientes del usuario
     const unsubApproved = onSnapshot(approvedQuery, (snap) => {
       approved = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       mergeAndSet();
@@ -319,6 +318,7 @@ return (
           key={marker.id}
           minWidth={340}
           maxWidth={420}
+          
           >
 
             {editingId === marker.id ? (

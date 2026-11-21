@@ -88,7 +88,7 @@ export default function Comments({ markerId }) {
                 <span style={styles.date}>{formatDate(comment.createdAt)}</span>
               </div>
               <p style={styles.commentText}>{comment.text}</p>
-              {(role === "admin" || user?.uid === comment.userId) && (
+              {(role === "admin" ) && (
                 <button
                   style={styles.deleteBtn}
                   onClick={(e) => { e.stopPropagation(); handleDeleteComment(comment.id); }}

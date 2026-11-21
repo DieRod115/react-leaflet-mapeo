@@ -15,6 +15,7 @@ import { useAuth } from "../context/AuthContext";
 import logo1 from "../assets/MapCrosshairs.png";
 import logo2 from "../assets/NotifIcon.png";
 import logo3 from "../assets/icon.png";
+import SmartSidebar from "./SmartSidebar";
 
 
 const MapView = () => {
@@ -206,7 +207,7 @@ const handleFollowClick = () => {
       {showPanelNotif && (
         <PanelNotif onClose={() => setShowPanelNotif(false)} />
       )}
-      
+      <SmartSidebar side="left" handleTop={10} />
 
     
     </div>
