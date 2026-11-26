@@ -12,6 +12,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
+import Incidentes from './Incidentes.js';
 
 const AdminPanel = ({ onClose }) => {
   const [pending, setPending] = useState([]);
@@ -161,13 +162,19 @@ const AdminPanel = ({ onClose }) => {
           onChange={(e) => setEditLabel(e.target.value)}
           placeholder="Nombre"
         />
-        <select style={styles.input} value={editIncident} onChange={(e) => setEditIncident(e.target.value)}>
+        <Incidentes
+          value={editIncident}
+          onChange={(e) => setEditIncident(e.target.value)}
+          
+        />
+        {/*<select style={styles.input} value={editIncident} onChange={(e) => setEditIncident(e.target.value)}>
           <option value="">Seleccionar incidente</option>
           <option value="Robo">Robo</option>
           <option value="Asalto">Asalto</option>
           <option value="Acoso">Acoso</option>
           <option value="Violencia">Violencia</option>
         </select>
+        */}
         <textarea style={styles.noteInput} value={editDesc} onChange={(e) => setEditDesc(e.target.value)} placeholder="Descripción" rows={3} />
         <div style={styles.actionRow}>
           <button style={{ ...styles.btn, backgroundColor: "#3b82f6" }} onClick={() => handleSaveEdit(marker.id)}>Guardar</button>

@@ -22,6 +22,7 @@ import UserIcon from "./UserIcon";
 import MarkerIcon from "./MarkerIcon";
 import handleSaveEdit from "./adminpanel";
 import handleDelete from "./adminpanel";
+import Incidentes from "./Incidentes";
 
 const Markers = forwardRef((props, ref) => {
   const { user, role } = useAuth();
@@ -267,7 +268,11 @@ return (
                 placeholder="Titulo del reporte. Ejem: Robo en...."
                 autoFocus
               />
-              <select
+              <Incidentes
+                  value={editCrime}
+                  onChange={(e) => setEditCrime(e.target.value)}
+              />
+              {/*<select
                 style={styles.input}
                 value={newCrime}
                 onChange={(e) => setNewCrime(e.target.value)}
@@ -278,7 +283,7 @@ return (
                 <option value="Acoso">Acoso</option>
                 <option value="Violencia">Violencia</option>
                 <option value="Otro">Otro</option>
-              </select>
+              </select>*/}
               <textarea
                 style={styles.textarea}
                 value={newDesc}
@@ -330,18 +335,12 @@ return (
                   onChange={(e) => setEditLabel(e.target.value)}
                   placeholder="Titulo del reporte"
                 />
-                <select
-                  style={styles.input}
+                <Incidentes
                   value={editCrime}
                   onChange={(e) => setEditCrime(e.target.value)}
-                >
-                  <option value="">Seleccionar incidente</option>
-                  <option value="Robo">Robo</option>
-                  <option value="Asalto">Asalto</option>
-                  <option value="Acoso">Acoso</option>
-                  <option value="Violencia">Violencia</option>
-                  <option value="Otro">Otro</option>
-                </select>
+                
+                  
+                />
                 <textarea
                   style={styles.textarea}
                   value={editDesc}
