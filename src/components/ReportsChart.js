@@ -2,8 +2,10 @@ import React from "react";
 import {
   BarChart,
   Bar,
+  LineChart,
   XAxis,
   YAxis,
+  Line,
   CartesianGrid,
   Tooltip,
   Cell,
@@ -14,6 +16,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { incidentColor } from "./reportMeta";
+
+
 
 const countLabel = (value) =>
   `${value} reporte${value === 1 ? "" : "s"}`;
@@ -91,7 +95,7 @@ const ReportsChart = ({ incidentData, monthData }) => {
           </div>
         </div>
 
-        <div style={styles.card}>
+        {/*<div style={styles.card}>
           <h2 style={styles.title}>Distribución por tipo de incidente</h2>
           <div style={styles.chartBoxPie}>
             <ResponsiveContainer width="100%" height="100%">
@@ -130,7 +134,7 @@ const ReportsChart = ({ incidentData, monthData }) => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </div>*/}
       </div>
 
       {monthData.length > 0 && (
@@ -138,7 +142,7 @@ const ReportsChart = ({ incidentData, monthData }) => {
           <h2 style={styles.title}>Reportes por mes</h2>
           <div style={styles.chartBoxSmall}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
+              <LineChart
                 data={monthData}
                 margin={{ top: 16, right: 16, left: 0, bottom: 8 }}
               >
@@ -160,22 +164,33 @@ const ReportsChart = ({ incidentData, monthData }) => {
                 />
                 <Tooltip
                   formatter={(value) => [countLabel(value), "Cantidad"]}
-                  cursor={{ fill: "rgba(255,255,255,0.06)" }}
+                  cursor={{
+                    stroke: "rgba(255,255,255,0.25)",
+                    strokeWidth: 1,
+                  }}
                   {...tooltipProps}
                 />
-                <Bar
+                <Line
+                  //type="monotone"
                   dataKey="count"
-                  fill="#3b82f6"
-                  barSize={26}
-                  radius={[4, 4, 0, 0]}
+                  name="Reportes"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  dot={{
+                    r: 3,
+                    fill: "#3b82f6",
+                    stroke: "#1e1e1e",
+                    strokeWidth: 1,
+                  }}
+                  activeDot={{ r: 5, stroke: "#1e1e1e", strokeWidth: 1 }}
                 >
                   <LabelList
                     dataKey="count"
                     position="top"
                     fill={LABEL_COLOR}
                   />
-                </Bar>
-              </BarChart>
+                </Line>
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </div>

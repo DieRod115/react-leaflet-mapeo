@@ -72,7 +72,7 @@ export default function SmartSidebar({
 const css = `
 .ss-handle {
   position: fixed; z-index: 900;
-  width: 10px; height: 72px; border: 0; padding: 0; cursor: pointer;
+  width: 15px; height: 72px; border: 0; padding: 0; cursor: pointer;
   border-radius: 8px 0 0 8px; background: rgba(29, 8, 8, 0.45);
 }
 .ss-handle:hover { width: 12px; background: rgba(255,255,255,.7); }
